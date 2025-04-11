@@ -109,6 +109,13 @@ class Player
         return name;
     }
 };
+/*
+    SnakeLadder
+    - vector<Player*>players
+    - Board *board
+    - Dice *dice
+    - unordered_set<Player*>won
+*/
 class SnakeLadder
 {
     vector<Player*>players;
