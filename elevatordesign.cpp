@@ -1,7 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 class ElevatorManager;
-// ElevatorObserver -> Panel
+/* ElevatorObserver -> OuterPanel
+    Pure virtual Methods:
+    + update(elevatorId, floor)
+    + requestElevator()
+    + setManager(manager)
+*/
 class ElevatorObserver
 {
     public:
@@ -9,7 +14,16 @@ class ElevatorObserver
     virtual void requestElevator() = 0;
     virtual void setManager(ElevatorManager *m) = 0;
 };
-// OuterPanel
+/* OuterPanel
+    Properties:
+    - ElevatorManeger*
+    - currentFloor
+    Methods:
+    + OuterPanel(floor)
+    + update(elevatorNumber, floor)
+    + setManager(manager)
+    + requestElevator()
+*/
 class OuterPanel: public ElevatorObserver
 {
     ElevatorManager *obj;
@@ -26,9 +40,17 @@ class OuterPanel: public ElevatorObserver
     void setManager(ElevatorManager *m) override;
     void requestElevator() override;
 };
+/* 
+    Forward class declaration
+    Elevator, Strategy - (Just for other class where these classes are defined)
+*/
 class Elevator;
 class Strategy;
-// State - movingUp, movingDown, Idle
+/*
+    State - MoveUpState, MoveDownState, IdleState
+    Methods:
+    + getType()
+*/
 class State
 {
     public:
@@ -58,11 +80,22 @@ class IdleState: public State
         return "IDLE";
     }
 };
-// Shortest distance strategy, load balance strategy
-// Elevator
+/* 
+    Elevator
+    Properties:
+    - id
+    - State currentState
+    - currentFloor
+    - queue<int> floor request
+    Methods:
+    + addToQueue(floor)
+    + processQueue()
+    + setState(obj)
+    + getCurrentFloor()
+    + simulateMovement()
+*/
 class Elevator
 {
-    ElevatorManager *manager;
     int id;
     State *currentState;
     int currentFloor;
@@ -119,7 +152,11 @@ class Elevator
         setState(new IdleState()); // Stop the elevator
     }
 };
-// Strategy
+/* 
+    Strategy - ShortestDistanceStrategy
+    Methods:
+    + getElevator(floor, elevators[])
+*/
 class Strategy
 {
     public:
@@ -144,13 +181,24 @@ class ShortestDistanceStrategy: public Strategy
         return elevators[elevatorNum];
     }
 };
-// Elevator Manager
+/* 
+    ElevatorManager
+    Properties:
+    - vector<Elevator*> elevators
+    - vector<ElevatorObserver*> panels
+    - Strategy obj
+    Methods:
+    + addElevator(e)
+    + addPanel(p)
+    + setStrategy(s)
+    + addToQueue(floor)
+    + notifyObservers()
+*/
 class ElevatorManager
 {
     vector<Elevator*>elevators;
     vector<ElevatorObserver*>panels;
     Strategy *obj;
-    ElevatorObserver *ob;
     public:
     void addElevator(Elevator *a)
     {
@@ -194,34 +242,46 @@ void OuterPanel::setManager(ElevatorManager *m)
 
 int main()
 {
+    // Define 3 elevators with (id, start floor)
     Elevator *e1 = new Elevator(1,1);
     Elevator *e2 = new Elevator(2,1);
     Elevator *e3 = new Elevator(3,2);
     
+    // Define 4 panels for 4 floors with (floor)
     ElevatorObserver *p1 = new OuterPanel(1);
     ElevatorObserver *p2 = new OuterPanel(2);
     ElevatorObserver *p3 = new OuterPanel(3);
     ElevatorObserver *p4 = new OuterPanel(4);
     
+    // Define a Elevator Manager that manages requests
+    // and assigns elevators, notifies panels
     ElevatorManager *manager = new ElevatorManager();
+    // Add elevator to ElevatorManager
     manager->addElevator(e1);
     manager->addElevator(e2);
     manager->addElevator(e3);
-    
+    // Add panel to ElevatorManager
     manager->addPanel(p1);
     manager->addPanel(p2);
     manager->addPanel(p3);
     manager->addPanel(p4);
+    // Set the panel managers to a single manager (for requests)
     p1->setManager(manager);
     p2->setManager(manager);
     p3->setManager(manager);
     p4->setManager(manager);
     
+    // Start notifying the floor panels
     manager->notifyObservers();
     
     // Request elevator at floor 4
     p4->requestElevator();
     
+    // Example 2
+    manager->notifyObservers();
+    p2->requestElevator();
+    
+    // Clean up - memory deallocation
     delete e1; delete e2; delete e3;
     delete p1; delete p2; delete p3;
     delete manager;
