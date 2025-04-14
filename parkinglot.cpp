@@ -2,8 +2,13 @@
 using namespace std;
 /*
     User
-    Properties: -username, -password, -loggedIn
-    Methods: +login(), +logout()
+    Properties: 
+    + username
+    + password
+    + loggedIn
+    Methods: 
+    +login()
+    +logout()
 */
 class User {
     public:
@@ -103,12 +108,12 @@ class ElectricCar: public Vehicle {
 /*
     Parking Space/Spot
     Properties:
-    - id
-    - isOccupied
-    - isReserved
-    - Vehicle* vehicle
-    - reservationTime
-    - User* reservedBy
+    + id
+    + isOccupied
+    + isReserved
+    + Vehicle* vehicle
+    + reservationTime
+    + User* reservedBy
     Methods:
     + parkVehicle(Vehicle)
     + vacateSpot()
