@@ -185,6 +185,7 @@ class Cart {
     - orderTime
     Methods:
     + track()
+    + displayOrderedItems()
     + getOrderItems()
 */
 class Order {
@@ -204,14 +205,15 @@ class Order {
     void trackOrder() {
         cout<<"Order being tracked";
     }
-    unordered_map<Product*,int> getOrderItems() {
-        cout<<"Order placed successfully";
-        cout<<"Product\t\tCount";
+    void displayOrderedItems() {
+        cout<<"Following items are ordered:"<<endl;
         for(auto x:items) {
             Product *p = x.first;
             int count = x.second;
-            cout<<(p->name)<<"\t"<<count<<endl;
+            cout<<(p->name)<<": "<<count<<endl;
         }
+    }
+    unordered_map<Product*,int> getOrderItems() {
         return items;
     }
 };
@@ -286,7 +288,7 @@ class Amazon {
     
     bool addToCart(Product *p) {
         cart->addToCart(p);
-        cout<<"Added to cart successfully";
+        cout<<"Added to cart successfully"<<endl;
         return true;
     }
     bool removeFromCart(Product *p) {
@@ -296,13 +298,13 @@ class Amazon {
     void orderFromCart() {
         order = new Order(orderID, cart);
         orderID++;
-        order->getOrderItems();
+        order->displayOrderedItems();
         inventory->orderedItems(order);
     }
     void orderDirect(Product *p) {
         order = new Order(orderID, p);
         orderID++;
-        order->getOrderItems();
+        order->displayOrderedItems();
         inventory->orderedItems(order);
     }
 };
@@ -315,6 +317,23 @@ int main() {
     
     vector<Product*>products;
     
-    // Amazon amazon = new Amazon()
-    // Payment service
+    Product *p1 = new Product("iPhone", 100000);
+    Product *p2 = new Product("MacBook", 200000);
+    
+    unordered_map<Product*, int> initialInventory = {
+        {p1, 10},
+        {p2, 5}
+    };
+    
+    Amazon *amazon = new Amazon(initialInventory);
+    
+    Product* found = amazon->searchProduct("iPhone");
+    if(found) {
+        amazon->addToCart(found);
+    }
+    
+    amazon->orderFromCart();
+    
+    Payment *pay = new CardPayment();
+    pay->processPayment(p1, 1);
 }
