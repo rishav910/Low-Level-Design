@@ -123,6 +123,9 @@ class RateLimiter {
         cout<<"User not registered"<<endl;
         return false;
     }
+    // Disable copy constructor and operator overloading
+    RateLimiter(const RateLimiter&) = delete;
+    void operator=(const RateLimiter&) = delete;
 };
 RateLimiter* RateLimiter::obj = NULL;
 mutex RateLimiter::mtx;
